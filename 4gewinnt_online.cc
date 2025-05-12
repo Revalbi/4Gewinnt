@@ -21,7 +21,10 @@ struct Grid {
   bool check_sides(int i, int h, int color) {
     int left = i;
     int right = i;
+    cout << "Check sides and color " << color << endl;
+    cout << "color of board = " << grid[i][h] << endl;
     for (int i = 0; i < 3; ++i) {
+      cout << "left: " << left << " right: " << right << endl;
       if (left > 0 && grid[left-1][h] == color) {
         --left;
         cout << left << " left" << endl;
@@ -44,7 +47,10 @@ struct Grid {
   bool check_column(int w, int h, int color) {
     int bottom = h;
     int top = h;
+    cout << "Check column and color " << color << endl;
+    cout << "color of board = " << grid[w][h] << endl;
     for (int i = 0; i < 3; ++i) {
+      cout << "top: " << top << " bottom: " << bottom << endl;
       if (bottom > 0 && grid[w][bottom-1] == color) {
         --bottom;
         continue;
@@ -63,7 +69,10 @@ struct Grid {
     int counter2 = 0;
     int bottom_left = 0;
     int top_right = 0;
+    cout << "Check diagonal and color " << color << endl;
+    cout << "color of board = " << grid[w][h] << endl;
     for (int i = -3; i <= 3; ++i) {
+      cout << "counter1: " << counter1 << " counter2: " << counter2 << " bottom_left: " << bottom_left << " top_right: " << top_right << endl;
       if (w+i > 0 && h+i > 0 && w+i < grid.size() && h+i < grid[0].size() && grid[w+i][h+i] == color) {
         ++counter1;
       } else {
@@ -107,10 +116,7 @@ struct Grid {
         break;
       }
     }
-    if (h == -1) {
-      return -1;
-    }
-    return check_win(i, h, color);
+    return h;
   }
 
   void print() {
@@ -258,7 +264,8 @@ int main(int argc, char *argv[]) {
         cout << "Welche Spalte wählst du Spieler " << (color ? "\033[33mGelb\033[0m" : "\033[31mRot\033[0m") << "?" << endl;
         cin >> column;
 
-        if (column <= 0 || column > w || gr.play(column - 1, color) == -1) {
+        int height = gr.play(column - 1, color);
+        if (column <= 0 || column > w || height == -1) {
           cout << "------------------------------------------------------------" << endl;
           cout << "Vielleicht solltes du eine Spalte nehmen die nicht voll ist." << endl;
           cout << "Du hast aber Glueck, du kannst es nochmals versuchen." << endl;
@@ -266,7 +273,7 @@ int main(int argc, char *argv[]) {
         }
 
         send(client_sock, &column, sizeof(column), 0);
-        if (gr.check_win(column - 1, gr.grid[column - 1].size() - 1, color)) {
+        if (gr.check_win(column - 1, height, color)) {
           win = true;
         }
         send(client_sock, &win, sizeof(win), 0);
